@@ -43,6 +43,44 @@ void main() {
     await tempDir.delete(recursive: true);
   });
 
+  // Answers the currently visible NumericInputEngine activity by scrolling
+  // the digit + check buttons into view (the screen body is a
+  // SingleChildScrollView, so the keypad may render below the fold) and
+  // tapping them.
+  //
+  // The tap + check button are wrapped in `tester.runAsync` because tapping
+  // "check" synchronously triggers ActivitySessionScreen's
+  // ProfileNotifier.answerActivity(), which fires a real (unawaited) Hive
+  // box write (ProfileRepository.save). Widget tests run inside a fake-time
+  // zone; a real asynchronous Hive/dart:io operation started in that zone
+  // never completes because nothing ever advances real time for it, which
+  // is what caused `Hive.deleteFromDisk()` in tearDown to hang forever.
+  // `runAsync` switches to a real zone for the duration of the callback so
+  // that real Future (and the 500ms `Future.delayed` in
+  // `_handleAnswered`) can actually run and complete.
+  Future<void> answerVisibleActivity(WidgetTester tester, String digit) async {
+    final digitButton = find.widgetWithText(ElevatedButton, digit);
+    await tester.ensureVisible(digitButton);
+    await tester.pump();
+    await tester.tap(digitButton);
+    await tester.pump();
+
+    final checkIcon = find.byIcon(Icons.check);
+    await tester.ensureVisible(checkIcon);
+    await tester.pump();
+    await tester.runAsync(() async {
+      await tester.tap(checkIcon);
+      // Let the widget's real 500ms Future.delayed (advance-or-navigate)
+      // actually fire, since it was created in this same real zone.
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+    });
+    // One pump reflects the setState/pushReplacement that happened during
+    // runAsync; a second is needed for go_router's Router to finish
+    // rebuilding into the new page.
+    await tester.pump();
+    await tester.pump();
+  }
+
   testWidgets('completing all activities in a session navigates to the result screen', (tester) async {
     final router = GoRouter(routes: [
       GoRoute(path: '/', builder: (context, state) => const ActivitySessionScreen(subject: SubjectId.math)),
@@ -65,27 +103,13 @@ void main() {
       ],
       child: MaterialApp.router(routerConfig: router),
     ));
-
-    // Scroll down to reveal buttons.
-    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
     await tester.pump();
 
     // Answer question 1 (itemCount 2) correctly.
-    await tester.tap(find.widgetWithText(ElevatedButton, '2'));
-    await tester.pump();
-    await tester.tap(find.byIcon(Icons.check));
-    await tester.pump(const Duration(milliseconds: 600));
-
-    // Scroll down again for second question.
-    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
-    await tester.pump();
+    await answerVisibleActivity(tester, '2');
 
     // Answer question 2 (itemCount 1) correctly.
-    await tester.tap(find.widgetWithText(ElevatedButton, '1'));
-    await tester.pump();
-    await tester.tap(find.byIcon(Icons.check));
-    await tester.pump(const Duration(milliseconds: 600));
-    await tester.pump(const Duration(seconds: 1));
+    await answerVisibleActivity(tester, '1');
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(find.text('2 / 2 betul'), findsOneWidget);
