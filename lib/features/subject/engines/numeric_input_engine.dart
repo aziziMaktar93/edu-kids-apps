@@ -39,26 +39,27 @@ class _NumericInputEngineState extends State<NumericInputEngine> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(payload.prompt, style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Wrap(
           alignment: WrapAlignment.center,
-          spacing: 8,
-          children: List.generate(payload.itemCount, (_) => Icon(payload.itemIcon, size: 32, color: Colors.orange)),
+          spacing: 4,
+          children: List.generate(payload.itemCount, (_) => Icon(payload.itemIcon, size: 24, color: Colors.orange)),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           alignment: Alignment.center,
           decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(12)),
           child: Text(_entered.isEmpty ? '?' : _entered, style: Theme.of(context).textTheme.headlineMedium),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+          mainAxisSpacing: 6,
+          crossAxisSpacing: 6,
+          childAspectRatio: 2.4,
           children: [
             for (final d in ['1', '2', '3', '4', '5', '6', '7', '8', '9'])
               ElevatedButton(onPressed: () => _tapDigit(d), child: Text(d)),

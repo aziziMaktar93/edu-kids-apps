@@ -7,10 +7,6 @@ void main() {
   const payload = NumericInputPayload(prompt: 'Berapa banyak epal?', itemIcon: Icons.circle, itemCount: 3);
 
   testWidgets('entering the correct count and checking calls onAnswered(true)', (tester) async {
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
-    tester.binding.window.physicalSizeTestValue = const Size(1200, 2000);
-    tester.binding.window.devicePixelRatioTestValue = 1.5;
-
     bool? result;
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: NumericInputEngine(payload: payload, onAnswered: (v) => result = v)),
@@ -25,10 +21,6 @@ void main() {
   });
 
   testWidgets('entering the wrong count and checking calls onAnswered(false)', (tester) async {
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
-    tester.binding.window.physicalSizeTestValue = const Size(1200, 2000);
-    tester.binding.window.devicePixelRatioTestValue = 1.5;
-
     bool? result;
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: NumericInputEngine(payload: payload, onAnswered: (v) => result = v)),
@@ -43,10 +35,6 @@ void main() {
   });
 
   testWidgets('backspace removes the last entered digit', (tester) async {
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
-    tester.binding.window.physicalSizeTestValue = const Size(1200, 2000);
-    tester.binding.window.devicePixelRatioTestValue = 1.5;
-
     bool? result;
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: NumericInputEngine(payload: payload, onAnswered: (v) => result = v)),
