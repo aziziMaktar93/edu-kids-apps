@@ -67,23 +67,17 @@ void main() {
     ));
 
     // Answer question 1 (itemCount 2) correctly.
-    // Scroll to make buttons visible.
-    await tester.drag(find.byType(SingleChildScrollView).first, const Offset(0, -250));
-    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.widgetWithText(ElevatedButton, '2'));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.check));
     await tester.pump(const Duration(milliseconds: 600));
 
     // Answer question 2 (itemCount 1) correctly.
-    // Scroll again to make buttons visible for second question.
-    await tester.drag(find.byType(SingleChildScrollView).first, const Offset(0, -250));
-    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.widgetWithText(ElevatedButton, '1'));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.check));
     await tester.pump(const Duration(milliseconds: 600));
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(find.text('2 / 2 betul'), findsOneWidget);

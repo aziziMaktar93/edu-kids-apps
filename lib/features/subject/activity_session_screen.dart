@@ -52,29 +52,29 @@ class _ActivitySessionScreenState extends ConsumerState<ActivitySessionScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(info.name)),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Tahap 1'),
-                  Text('${_index + 1} / ${activities.length}'),
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(value: (_index + 1) / activities.length),
-              const SizedBox(height: 24),
-              ActivityEngineView(
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Tahap 1'),
+                Text('${_index + 1} / ${activities.length}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            LinearProgressIndicator(value: (_index + 1) / activities.length),
+            const SizedBox(height: 24),
+            Expanded(
+              child: ActivityEngineView(
                 key: ValueKey(activity.id),
                 activity: activity,
                 onAnswered: (correct) => _handleAnswered(activity, activities, correct),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
