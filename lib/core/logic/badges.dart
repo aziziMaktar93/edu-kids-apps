@@ -22,21 +22,21 @@ class BadgeDefinition {
 final List<BadgeDefinition> badgeCatalog = [
   BadgeDefinition(
     id: 'math_master',
-    name: 'Math Master',
+    name: 'Jaguh Matematik',
     description: 'Jago Matematik',
     icon: Icons.calculate,
     isUnlocked: (state, content) => state.subjectProgress(SubjectId.math, content) >= 1.0,
   ),
   BadgeDefinition(
     id: 'science_hero',
-    name: 'Science Hero',
+    name: 'Wira Sains',
     description: 'Ahli Sains',
     icon: Icons.science,
     isUnlocked: (state, content) => state.subjectProgress(SubjectId.science, content) >= 1.0,
   ),
   BadgeDefinition(
     id: 'spelling_master',
-    name: 'Spelling Master',
+    name: 'Jaguh Mengeja',
     description: 'Pakar Mengeja',
     icon: Icons.spellcheck,
     isUnlocked: (state, content) =>
@@ -45,7 +45,7 @@ final List<BadgeDefinition> badgeCatalog = [
   ),
   BadgeDefinition(
     id: 'champion',
-    name: 'Champion',
+    name: 'Juara',
     description: 'Selesai 10 Kuiz',
     icon: Icons.emoji_events,
     isUnlocked: (state, content) => state.totalActivitiesCompleted >= 10,

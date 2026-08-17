@@ -31,8 +31,8 @@ void main() {
 
     expect(find.text('Peti Harta Karun'), findsOneWidget);
     expect(find.text('0 / 100 Bintang'), findsOneWidget);
-    expect(find.text('Math Master'), findsOneWidget);
-    expect(find.text('Champion'), findsOneWidget);
+    expect(find.text('Jaguh Matematik'), findsOneWidget);
+    expect(find.text('Juara'), findsOneWidget);
     expect(find.byIcon(Icons.lock), findsWidgets); // all locked initially
   });
 }
