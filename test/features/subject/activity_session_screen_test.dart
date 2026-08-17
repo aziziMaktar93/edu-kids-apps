@@ -9,6 +9,7 @@ import 'package:edukids/core/models/subject.dart';
 import 'package:edukids/core/providers/providers.dart';
 import 'package:edukids/core/storage/profile_repository.dart';
 import 'package:edukids/features/subject/activity_session_screen.dart';
+import 'package:edukids/features/subject/engines/matching_engine.dart';
 import 'package:edukids/features/subject/result_screen.dart';
 import 'package:edukids/features/subject/session_result.dart';
 
@@ -28,6 +29,33 @@ void main() {
       subject: SubjectId.math,
       type: ActivityType.numericInput,
       payload: NumericInputPayload(prompt: 'Berapa?', itemIcon: Icons.star, itemCount: 1),
+    ),
+  ];
+
+  // Mirrors a real matching activity's size (6 pairs) to reproduce the
+  // layout composition (MatchingEngine hosted inside
+  // ActivitySessionScreen's SingleChildScrollView) that previously broke:
+  // Task 12 wrapped MatchingEngine's Row in its own SingleChildScrollView
+  // to guard against overflow under a bounded-height host, then Task 14
+  // found that guard was itself the source of a 127px overflow once the
+  // host became unbounded/self-sizing, and removed it. This pairing has a
+  // history of breaking, so it gets a dedicated regression test.
+  const matchingActivities = [
+    Activity(
+      id: 'm1',
+      subject: SubjectId.math,
+      type: ActivityType.matching,
+      payload: MatchingPayload(
+        prompt: 'Padankan!',
+        pairs: [
+          MatchPair(left: 'A', rightLabel: 'Apple', rightIcon: Icons.apple),
+          MatchPair(left: 'B', rightLabel: 'Ball', rightIcon: Icons.sports_soccer),
+          MatchPair(left: 'C', rightLabel: 'Cat', rightIcon: Icons.pets),
+          MatchPair(left: 'D', rightLabel: 'Dog', rightIcon: Icons.pets),
+          MatchPair(left: 'E', rightLabel: 'Egg', rightIcon: Icons.egg),
+          MatchPair(left: 'F', rightLabel: 'Fish', rightIcon: Icons.set_meal),
+        ],
+      ),
     ),
   ];
 
@@ -113,5 +141,38 @@ void main() {
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(find.text('2 / 2 betul'), findsOneWidget);
+  });
+
+  testWidgets('renders a matching activity inside the session screen without a layout exception', (tester) async {
+    final router = GoRouter(routes: [
+      GoRoute(path: '/', builder: (context, state) => const ActivitySessionScreen(subject: SubjectId.math)),
+      GoRoute(
+        path: '/learn/:subjectId/result',
+        builder: (context, state) => ResultScreen(result: state.extra as SessionResult),
+      ),
+    ]);
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        profileRepositoryProvider.overrideWithValue(repository),
+        contentProvider.overrideWithValue({
+          SubjectId.math: matchingActivities,
+          SubjectId.science: const [],
+          SubjectId.english: const [],
+          SubjectId.bahasaMelayu: const [],
+          SubjectId.jawi: const [],
+        }),
+      ],
+      child: MaterialApp.router(routerConfig: router),
+    ));
+    await tester.pump();
+
+    // No RenderFlex overflow / layout exception from hosting MatchingEngine
+    // (self-sizing) inside ActivitySessionScreen's SingleChildScrollView
+    // (unbounded height, no Expanded).
+    expect(tester.takeException(), isNull);
+    expect(find.byType(MatchingEngine), findsOneWidget);
+    expect(find.text('Padankan!'), findsOneWidget);
+    expect(find.byKey(const ValueKey('left_0')), findsOneWidget);
   });
 }
