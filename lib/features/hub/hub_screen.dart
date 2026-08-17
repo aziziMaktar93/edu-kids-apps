@@ -26,7 +26,7 @@ class HubScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Jom Belajar!', style: Theme.of(context).textTheme.headlineMedium),
-            const Text('Choose a subject to start playing and learning.'),
+            const Text('Pilih subjek untuk mula bermain dan belajar.'),
             const SizedBox(height: 16),
             Expanded(
               child: GridView.count(
