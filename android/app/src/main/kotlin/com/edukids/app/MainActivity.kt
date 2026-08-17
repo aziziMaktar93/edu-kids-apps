@@ -1,4 +1,4 @@
-package com.edukids.edukids
+package com.edukids.app
 
 import io.flutter.embedding.android.FlutterActivity
 
