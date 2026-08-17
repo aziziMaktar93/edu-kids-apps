@@ -47,7 +47,7 @@ void main() {
     final router = GoRouter(routes: [
       GoRoute(path: '/', builder: (context, state) => const ActivitySessionScreen(subject: SubjectId.math)),
       GoRoute(
-        path: '/result',
+        path: '/learn/:subjectId/result',
         builder: (context, state) => ResultScreen(result: state.extra as SessionResult),
       ),
     ]);
@@ -66,18 +66,26 @@ void main() {
       child: MaterialApp.router(routerConfig: router),
     ));
 
+    // Scroll down to reveal buttons.
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
+    await tester.pump();
+
     // Answer question 1 (itemCount 2) correctly.
     await tester.tap(find.widgetWithText(ElevatedButton, '2'));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.check));
     await tester.pump(const Duration(milliseconds: 600));
 
+    // Scroll down again for second question.
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
+    await tester.pump();
+
     // Answer question 2 (itemCount 1) correctly.
     await tester.tap(find.widgetWithText(ElevatedButton, '1'));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.check));
     await tester.pump(const Duration(milliseconds: 600));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(find.text('2 / 2 betul'), findsOneWidget);
