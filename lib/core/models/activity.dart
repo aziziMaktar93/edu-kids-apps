@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'subject.dart';
 
+export 'subject.dart';
+
 enum ActivityType { multipleChoice, numericInput, spelling, matching }
 
 class Activity {
