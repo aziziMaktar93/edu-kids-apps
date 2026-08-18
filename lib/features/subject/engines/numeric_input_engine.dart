@@ -14,6 +14,10 @@ class NumericInputEngine extends StatefulWidget {
 class _NumericInputEngineState extends State<NumericInputEngine> {
   String _entered = '';
   bool _submitted = false;
+  // Correct/wrong feedback shown briefly on the answer box before the caller
+  // advances to the next activity (mirrors MultipleChoiceEngine's green/red
+  // button feedback, which this engine and SpellingEngine previously lacked).
+  bool? _isCorrect;
 
   void _tapDigit(String digit) {
     if (_submitted) return;
@@ -27,9 +31,13 @@ class _NumericInputEngineState extends State<NumericInputEngine> {
 
   void _check() {
     if (_submitted || _entered.isEmpty) return;
-    setState(() => _submitted = true);
     final value = int.tryParse(_entered);
-    widget.onAnswered(value == widget.payload.itemCount);
+    final isCorrect = value == widget.payload.itemCount;
+    setState(() {
+      _submitted = true;
+      _isCorrect = isCorrect;
+    });
+    widget.onAnswered(isCorrect);
   }
 
   @override
@@ -49,8 +57,15 @@ class _NumericInputEngineState extends State<NumericInputEngine> {
         Container(
           padding: const EdgeInsets.all(8),
           alignment: Alignment.center,
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(12)),
-          child: Text(_entered.isEmpty ? '?' : _entered, style: Theme.of(context).textTheme.headlineMedium),
+          decoration: BoxDecoration(
+            color: switch (_isCorrect) { true => Colors.green.shade400, false => Colors.red.shade300, null => null },
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            _entered.isEmpty ? '?' : _entered,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: _isCorrect == null ? null : Colors.white),
+          ),
         ),
         const SizedBox(height: 8),
         GridView.count(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/subject.dart';
 import '../../core/providers/providers.dart';
+import '../../core/theme/subject_button_style.dart';
 
 class SubjectActivityListScreen extends ConsumerWidget {
   final SubjectId subject;
@@ -17,7 +18,7 @@ class SubjectActivityListScreen extends ConsumerWidget {
     final completedCount = activities.where((a) => profile.completedActivityIds.contains(a.id)).length;
 
     return Scaffold(
-      appBar: AppBar(title: Text(info.name), backgroundColor: info.color),
+      appBar: AppBar(title: Text(info.name), backgroundColor: info.color, foregroundColor: Colors.white),
       body: Column(
         children: [
           Padding(
@@ -47,7 +48,7 @@ class SubjectActivityListScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => context.push('/learn/${subject.name}/session'),
-              style: ElevatedButton.styleFrom(backgroundColor: info.color),
+              style: subjectButtonStyle(info.color),
               child: const Text('Mula'),
             ),
           ),

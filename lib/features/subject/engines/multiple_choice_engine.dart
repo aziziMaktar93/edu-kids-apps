@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/activity.dart';
+import '../../../core/theme/subject_button_style.dart';
 
 class MultipleChoiceEngine extends StatefulWidget {
   final MultipleChoicePayload payload;
@@ -50,7 +51,7 @@ class _MultipleChoiceEngineState extends State<MultipleChoiceEngine> {
             }
             return ElevatedButton(
               onPressed: () => _select(i),
-              style: ElevatedButton.styleFrom(backgroundColor: bg),
+              style: answerFeedbackButtonStyle(bg),
               child: Text(payload.options[i]),
             );
           }),

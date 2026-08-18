@@ -15,6 +15,11 @@ class _SpellingEngineState extends State<SpellingEngine> {
   late List<int?> _blankBankIndex;
   late Set<int> _usedBankIndices;
   bool _submitted = false;
+  // Correct/wrong feedback shown briefly on the blanks before the caller
+  // advances to the next activity (mirrors MultipleChoiceEngine's green/red
+  // button feedback, which this engine and NumericInputEngine previously
+  // lacked).
+  bool? _isCorrect;
 
   @override
   void initState() {
@@ -49,8 +54,12 @@ class _SpellingEngineState extends State<SpellingEngine> {
   void _check() {
     final letters = widget.payload.letterBank;
     final attempt = _blankBankIndex.map((i) => letters[i!]).join();
-    _submitted = true;
-    widget.onAnswered(attempt == widget.payload.targetWord);
+    final isCorrect = attempt == widget.payload.targetWord;
+    setState(() {
+      _submitted = true;
+      _isCorrect = isCorrect;
+    });
+    widget.onAnswered(isCorrect);
   }
 
   @override
@@ -74,8 +83,18 @@ class _SpellingEngineState extends State<SpellingEngine> {
               width: 40,
               height: 40,
               alignment: Alignment.center,
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(8)),
-              child: Text(letter, style: Theme.of(context).textTheme.titleLarge),
+              decoration: BoxDecoration(
+                color: switch (_isCorrect) { true => Colors.green.shade400, false => Colors.red.shade300, null => null },
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                letter,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(color: _isCorrect == null ? null : Colors.white),
+              ),
             );
           }),
         ),
