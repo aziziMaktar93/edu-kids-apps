@@ -41,7 +41,12 @@ class AgeSelectScreen extends ConsumerWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: selected == null ? null : () => context.go('/learn'),
+              onPressed: selected == null
+                  ? null
+                  : () {
+                      ref.read(profileProvider.notifier).setAgeGroup(selected);
+                      context.go('/learn');
+                    },
               child: const Text('Teruskan'),
             ),
           ],

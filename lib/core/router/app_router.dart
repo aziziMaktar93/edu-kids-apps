@@ -1,5 +1,7 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/subject.dart';
+import '../providers/providers.dart';
 import '../widgets/coming_soon_screen.dart';
 import 'app_shell.dart';
 import '../../features/age_select/age_select_screen.dart';
@@ -14,8 +16,22 @@ import '../../features/subject/subject_activity_list_screen.dart';
 
 SubjectId _subjectFromParam(String param) => SubjectId.values.firstWhere((s) => s.name == param);
 
+const _entryPointLocations = {'/splash', '/age-select'};
+
 final appRouter = GoRouter(
   initialLocation: '/splash',
+  // A child who already picked an age group on a previous launch shouldn't
+  // have to redo splash + age-select every single cold start (that screen
+  // pair only exists to capture the choice once). `context` here is a
+  // descendant of the ProviderScope that wraps MaterialApp.router, so it can
+  // read the persisted profile directly without appRouter itself needing to
+  // be built from a provider.
+  redirect: (context, state) {
+    if (!_entryPointLocations.contains(state.matchedLocation)) return null;
+    final profile = ProviderScope.containerOf(context, listen: false).read(profileProvider);
+    if (profile.ageGroup != null) return '/learn';
+    return null;
+  },
   routes: [
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/age-select', builder: (context, state) => const AgeSelectScreen()),

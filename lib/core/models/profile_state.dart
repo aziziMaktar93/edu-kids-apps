@@ -1,4 +1,5 @@
 import 'activity.dart';
+import 'age_group.dart';
 
 class ProfileState {
   final String childName;
@@ -8,6 +9,7 @@ class ProfileState {
   final int chestStars;
   final Set<String> completedActivityIds;
   final Set<String> unlockedBadgeIds;
+  final AgeGroup? ageGroup;
 
   const ProfileState({
     required this.childName,
@@ -17,6 +19,7 @@ class ProfileState {
     required this.chestStars,
     required this.completedActivityIds,
     required this.unlockedBadgeIds,
+    this.ageGroup,
   });
 
   factory ProfileState.initial() => const ProfileState(
@@ -27,6 +30,7 @@ class ProfileState {
         chestStars: 0,
         completedActivityIds: {},
         unlockedBadgeIds: {},
+        ageGroup: null,
       );
 
   double subjectProgress(SubjectId subject, Map<SubjectId, List<Activity>> contentBySubject) {
@@ -46,6 +50,7 @@ class ProfileState {
     int? chestStars,
     Set<String>? completedActivityIds,
     Set<String>? unlockedBadgeIds,
+    AgeGroup? ageGroup,
   }) {
     return ProfileState(
       childName: childName ?? this.childName,
@@ -55,6 +60,7 @@ class ProfileState {
       chestStars: chestStars ?? this.chestStars,
       completedActivityIds: completedActivityIds ?? this.completedActivityIds,
       unlockedBadgeIds: unlockedBadgeIds ?? this.unlockedBadgeIds,
+      ageGroup: ageGroup ?? this.ageGroup,
     );
   }
 
@@ -66,6 +72,7 @@ class ProfileState {
         'chestStars': chestStars,
         'completedActivityIds': completedActivityIds.toList(),
         'unlockedBadgeIds': unlockedBadgeIds.toList(),
+        'ageGroup': ageGroup?.name,
       };
 
   factory ProfileState.fromMap(Map<dynamic, dynamic> map) => ProfileState(
@@ -76,5 +83,6 @@ class ProfileState {
         chestStars: map['chestStars'] as int,
         completedActivityIds: Set<String>.from(map['completedActivityIds'] as List),
         unlockedBadgeIds: Set<String>.from(map['unlockedBadgeIds'] as List),
+        ageGroup: map['ageGroup'] == null ? null : AgeGroup.values.byName(map['ageGroup'] as String),
       );
 }

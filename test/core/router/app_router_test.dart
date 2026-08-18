@@ -38,7 +38,17 @@ void main() {
 
     await tester.tap(find.text('Tahap Satu'));
     await tester.pump();
-    await tester.tap(find.text('Teruskan'));
+    // Tapping "Teruskan" calls ProfileNotifier.setAgeGroup, which fires a
+    // real (unawaited) Hive box write via ProfileRepository.save(). A real
+    // dart:io/Hive Future started outside runAsync never completes inside
+    // flutter_test's fake-time zone, which then hangs tearDown's
+    // Hive.deleteFromDisk() forever. Wrapping the tap in runAsync switches to
+    // a real zone so the write actually finishes. Same pattern as
+    // test/features/subject/activity_session_screen_test.dart (Task 14).
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Teruskan'));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
     await tester.pumpAndSettle();
 
     expect(find.text('Jom Belajar!'), findsOneWidget);
@@ -61,7 +71,12 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Tahap Satu'));
     await tester.pump();
-    await tester.tap(find.text('Teruskan'));
+    // See the runAsync comment in the first test above: setAgeGroup's
+    // real (unawaited) Hive write must be allowed to actually complete.
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Teruskan'));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
     await tester.pumpAndSettle();
 
     // Nested route: tapping a subject on the hub should push /learn/:subjectId

@@ -77,7 +77,16 @@ void main() {
     // Age select -> hub.
     await tester.tap(find.text('Tahap Satu'));
     await tester.pump();
-    await tester.tap(find.text('Teruskan'));
+    // Tapping "Teruskan" calls ProfileNotifier.setAgeGroup, which fires a
+    // real (unawaited) Hive box write via ProfileRepository.save(). Wrap in
+    // runAsync so that write actually completes instead of dangling in the
+    // fake-time zone -- see the fuller explanation in
+    // test/features/subject/activity_session_screen_test.dart (Task 14) and
+    // test/core/router/app_router_test.dart (this fix wave).
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Teruskan'));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
     await tester.pumpAndSettle();
     expect(find.text('Jom Belajar!'), findsOneWidget);
 
