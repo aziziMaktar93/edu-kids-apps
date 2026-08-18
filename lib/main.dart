@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'app.dart';
+import 'core/providers/providers.dart';
+import 'core/storage/profile_repository.dart';
 
-void main() {
-  runApp(const EduKidsPlaceholder());
-}
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  final repository = ProfileRepository();
+  await repository.init();
 
-class EduKidsPlaceholder extends StatelessWidget {
-  const EduKidsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(child: Text('EduKids')),
-      ),
-    );
-  }
+  runApp(
+    ProviderScope(
+      overrides: [profileRepositoryProvider.overrideWithValue(repository)],
+      child: const EduKidsApp(),
+    ),
+  );
 }
