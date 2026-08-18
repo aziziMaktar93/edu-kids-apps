@@ -1,6 +1,5 @@
 import '../models/activity.dart';
 import '../models/profile_state.dart';
-import '../models/subject.dart';
 import 'badges.dart';
 
 ProfileState applyActivityResult(

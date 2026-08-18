@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edukids/core/models/activity.dart';
-import 'package:edukids/core/models/subject.dart';
 
 void main() {
   test('subjectCatalog has an entry for every SubjectId', () {

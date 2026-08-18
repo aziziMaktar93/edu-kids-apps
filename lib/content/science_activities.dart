@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/models/activity.dart';
-import '../core/models/subject.dart';
 
 final List<Activity> scienceActivities = [
   const Activity(

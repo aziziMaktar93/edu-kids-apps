@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:edukids/core/models/activity.dart';
-import 'package:edukids/core/models/subject.dart';
 import 'package:edukids/core/providers/providers.dart';
 import 'package:edukids/core/storage/profile_repository.dart';
 import 'package:edukids/features/subject/activity_session_screen.dart';

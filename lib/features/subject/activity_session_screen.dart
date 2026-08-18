@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/activity.dart';
-import '../../core/models/subject.dart';
 import '../../core/providers/providers.dart';
 import 'engines/activity_engine_view.dart';
 import 'session_result.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edukids/content/all_content.dart';
 import 'package:edukids/core/models/activity.dart';
-import 'package:edukids/core/models/subject.dart';
 
 bool _bankContainsWord(List<String> bank, String word) {
   final available = Map<String, int>.from({});

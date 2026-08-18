@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/profile_logic.dart';
 import '../models/activity.dart';
 import '../models/profile_state.dart';
-import '../models/subject.dart';
 import '../storage/profile_repository.dart';
 import '../../content/all_content.dart';
 

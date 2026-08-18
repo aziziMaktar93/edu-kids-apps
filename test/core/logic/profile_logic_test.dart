@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:edukids/core/logic/profile_logic.dart';
 import 'package:edukids/core/models/activity.dart';
 import 'package:edukids/core/models/profile_state.dart';
-import 'package:edukids/core/models/subject.dart';
 import 'package:flutter/material.dart';
 
 const _mathActivity1 = Activity(

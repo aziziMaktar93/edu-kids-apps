@@ -1,5 +1,4 @@
 import 'activity.dart';
-import 'subject.dart';
 
 class ProfileState {
   final String childName;

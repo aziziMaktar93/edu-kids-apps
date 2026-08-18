@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/activity.dart';
 import '../models/profile_state.dart';
-import '../models/subject.dart';
 
 class BadgeDefinition {
   final String id;
