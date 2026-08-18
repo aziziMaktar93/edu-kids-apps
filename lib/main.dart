@@ -8,12 +8,15 @@ import 'core/storage/profile_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // EduKids is offline-only: no font assets are bundled (see pubspec.yaml),
-  // and release Android builds don't grant INTERNET, so runtime fetching
-  // from fonts.gstatic.com must be disabled rather than left as an
-  // implicit, silently-failing network dependency. This makes buildAppTheme()
-  // (lib/core/theme/app_theme.dart) fall back to the default system font
-  // deterministically instead of depending on network access.
+  // EduKids is offline-only, and release Android builds don't grant
+  // INTERNET, so runtime fetching from fonts.gstatic.com must stay disabled
+  // rather than be left as an implicit, sometimes-silently-failing network
+  // dependency. The Plus Jakarta Sans / Quicksand weights buildAppTheme()
+  // (lib/core/theme/app_theme.dart) needs are bundled as local assets (see
+  // assets/fonts/ and the `fonts:`-free `assets:` entry in pubspec.yaml, per
+  // the google_fonts package's local-asset-manifest lookup convention), so
+  // this flag only forces use of those bundled files -- it does not fall
+  // back to the system font.
   GoogleFonts.config.allowRuntimeFetching = false;
   await Hive.initFlutter();
   final repository = ProfileRepository();
