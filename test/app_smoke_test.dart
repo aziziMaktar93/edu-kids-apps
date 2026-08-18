@@ -110,10 +110,19 @@ void main() {
     // is 'Matematik'), so the tap target is unambiguous.
     await tester.tap(find.text('Pencapaian'));
     await tester.pumpAndSettle();
-    // The badge name is 'Jaguh Matematik' (translated to Bahasa Melayu in a
-    // Task 5 follow-up fix) -- see lib/core/logic/badges.dart.
-    expect(find.text('Jaguh Matematik'), findsOneWidget);
-    expect(find.byIcon(Icons.lock), findsWidgets); // other badges still locked
+    // AwardsScreen renders every badge's name unconditionally regardless of
+    // unlock state -- only the icon switches, via
+    // `Icon(unlocked ? badge.icon : Icons.lock)` (see
+    // lib/features/awards/awards_screen.dart). So `find.text('Jaguh
+    // Matematik')` would pass even at zero progress, and it wouldn't prove
+    // profile.unlockedBadgeIds actually got updated. Assert on the icon
+    // instead: Icons.calculate is the math_master badge's icon (see
+    // lib/core/logic/badges.dart) and is shown only when unlocked, and it
+    // appears nowhere else on this screen.
+    expect(find.byIcon(Icons.calculate), findsOneWidget);
+    // The other three badges (science_hero, spelling_master, champion) are
+    // still locked.
+    expect(find.byIcon(Icons.lock), findsNWidgets(3));
 
     // The bottom-nav destination label is 'Profil'. Right now (still on
     // AwardsScreen, whose AppBar title is 'Pencapaian Kamu') 'Profil' only
