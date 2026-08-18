@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/models/activity.dart';
 
@@ -13,9 +14,12 @@ class MatchingEngine extends StatefulWidget {
 
 class _MatchingEngineState extends State<MatchingEngine> {
   int? _selectedLeft;
+  int? _wrongLeft;
+  int? _wrongRight;
   final Set<int> _matched = {};
   bool _completed = false;
   late List<int> _rightOrder;
+  Timer? _wrongFeedbackTimer;
 
   @override
   void initState() {
@@ -23,9 +27,25 @@ class _MatchingEngineState extends State<MatchingEngine> {
     _rightOrder = List.generate(widget.payload.pairs.length, (i) => i)..shuffle();
   }
 
+  @override
+  void dispose() {
+    _wrongFeedbackTimer?.cancel();
+    super.dispose();
+  }
+
+  void _clearWrongFeedback() {
+    _wrongFeedbackTimer?.cancel();
+    _wrongFeedbackTimer = null;
+    _wrongLeft = null;
+    _wrongRight = null;
+  }
+
   void _tapLeft(int index) {
     if (_matched.contains(index)) return;
-    setState(() => _selectedLeft = index);
+    setState(() {
+      _clearWrongFeedback();
+      _selectedLeft = index;
+    });
   }
 
   void _tapRight(int index) {
@@ -41,7 +61,20 @@ class _MatchingEngineState extends State<MatchingEngine> {
         widget.onAnswered(true);
       }
     } else {
-      setState(() => _selectedLeft = null);
+      final wrongLeft = _selectedLeft;
+      setState(() {
+        _wrongLeft = wrongLeft;
+        _wrongRight = index;
+        _selectedLeft = null;
+      });
+      _wrongFeedbackTimer?.cancel();
+      _wrongFeedbackTimer = Timer(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        setState(() {
+          _wrongLeft = null;
+          _wrongRight = null;
+        });
+      });
     }
   }
 
@@ -61,9 +94,12 @@ class _MatchingEngineState extends State<MatchingEngine> {
                 children: List.generate(pairs.length, (i) {
                   final matched = _matched.contains(i);
                   final selected = _selectedLeft == i;
+                  final wrong = _wrongLeft == i;
                   return Card(
                     key: ValueKey('left_$i'),
-                    color: matched ? Colors.green.shade100 : (selected ? Colors.blue.shade100 : null),
+                    color: matched
+                        ? Colors.green.shade100
+                        : (wrong ? Colors.red.shade100 : (selected ? Colors.blue.shade100 : null)),
                     child: InkWell(
                       onTap: () => _tapLeft(i),
                       child: Padding(
@@ -80,10 +116,11 @@ class _MatchingEngineState extends State<MatchingEngine> {
               child: Column(
                 children: _rightOrder.map((originalIndex) {
                   final matched = _matched.contains(originalIndex);
+                  final wrong = _wrongRight == originalIndex;
                   final pair = pairs[originalIndex];
                   return Card(
                     key: ValueKey('right_$originalIndex'),
-                    color: matched ? Colors.green.shade100 : null,
+                    color: matched ? Colors.green.shade100 : (wrong ? Colors.red.shade100 : null),
                     child: InkWell(
                       onTap: () => _tapRight(originalIndex),
                       child: Padding(
