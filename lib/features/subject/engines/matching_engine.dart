@@ -95,16 +95,28 @@ class _MatchingEngineState extends State<MatchingEngine> {
                   final matched = _matched.contains(i);
                   final selected = _selectedLeft == i;
                   final wrong = _wrongLeft == i;
+                  Color? bg;
+                  Color? fg;
+                  if (matched) {
+                    bg = Colors.green.shade400;
+                    fg = Colors.white;
+                  } else if (wrong) {
+                    bg = Colors.red.shade300;
+                    fg = Colors.white;
+                  } else if (selected) {
+                    bg = Colors.blue.shade100;
+                  }
                   return Card(
                     key: ValueKey('left_$i'),
-                    color: matched
-                        ? Colors.green.shade100
-                        : (wrong ? Colors.red.shade100 : (selected ? Colors.blue.shade100 : null)),
+                    color: bg,
                     child: InkWell(
                       onTap: () => _tapLeft(i),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Text(pairs[i].left, style: Theme.of(context).textTheme.headlineMedium),
+                        child: Text(
+                          pairs[i].left,
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: fg),
+                        ),
                       ),
                     ),
                   );
@@ -118,16 +130,29 @@ class _MatchingEngineState extends State<MatchingEngine> {
                   final matched = _matched.contains(originalIndex);
                   final wrong = _wrongRight == originalIndex;
                   final pair = pairs[originalIndex];
+                  Color? bg;
+                  Color? fg;
+                  if (matched) {
+                    bg = Colors.green.shade400;
+                    fg = Colors.white;
+                  } else if (wrong) {
+                    bg = Colors.red.shade300;
+                    fg = Colors.white;
+                  }
                   return Card(
                     key: ValueKey('right_$originalIndex'),
-                    color: matched ? Colors.green.shade100 : (wrong ? Colors.red.shade100 : null),
+                    color: bg,
                     child: InkWell(
                       onTap: () => _tapRight(originalIndex),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: [Icon(pair.rightIcon), const SizedBox(width: 8), Text(pair.rightLabel)],
+                          children: [
+                            Icon(pair.rightIcon, color: fg),
+                            const SizedBox(width: 8),
+                            Text(pair.rightLabel, style: TextStyle(color: fg)),
+                          ],
                         ),
                       ),
                     ),

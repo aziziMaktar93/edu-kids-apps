@@ -38,6 +38,8 @@ void main() {
 
     expect(callCount, 1);
     expect(result, isTrue);
+    expect(tester.widget<Card>(find.byKey(const ValueKey('left_0'))).color, Colors.green.shade400);
+    expect(tester.widget<Card>(find.byKey(const ValueKey('right_0'))).color, Colors.green.shade400);
   });
 
   testWidgets('a wrong attempt does not call onAnswered and can be retried', (tester) async {
@@ -77,8 +79,8 @@ void main() {
     await tester.pump();
 
     Card cardAt(String key) => tester.widget<Card>(find.byKey(ValueKey(key)));
-    expect(cardAt('left_0').color, Colors.red.shade100);
-    expect(cardAt('right_1').color, Colors.red.shade100);
+    expect(cardAt('left_0').color, Colors.red.shade300);
+    expect(cardAt('right_1').color, Colors.red.shade300);
 
     // Retrying a left card clears the red feedback immediately, no waiting required.
     await tester.tap(find.byKey(const ValueKey('left_0')));
